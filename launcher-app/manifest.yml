@@ -3,7 +3,7 @@ manifest_version: 1
 
 # Privileges required by the application
 privileges:
-  - USAGE on WAREHOUSE COMPUTE_WH # Standard warehouse for setup
+  - USAGE on WAREHOUSE COMPUTE_WH
   - CREATE COMPUTE POOL
   - CREATE SERVICE
   - USAGE on DATABASE
