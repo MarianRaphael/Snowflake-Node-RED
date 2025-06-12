@@ -1,0 +1,27 @@
+# launcher-app/manifest.yml
+
+# The version of the manifest schema
+manifest_version: 1
+
+# The name of the application
+application_name: Node-RED for Snowflake
+
+# Privileges required by the application
+privileges:
+  - USAGE on WAREHOUSE COMPUTE_WH # Standard warehouse for setup
+  - CREATE COMPUTE POOL
+  - CREATE SERVICE
+  - USAGE on DATABASE
+  - USAGE on SCHEMA
+
+# The setup script to be run upon installation
+setup_script: setup.sql
+
+# The Streamlit entrypoint
+default_streamlit: streamlit.app
+
+# Configuration for the application package
+artifacts:
+  - setup.sql
+  - streamlit/
+

@@ -1,0 +1,9 @@
+{
+    "name": "node-red-snowflake-environment",
+    "description": "A Node-RED project with Snowflake integration",
+    "version": "1.0.0",
+    "private": true,
+    "dependencies": {
+        "snowflake-sdk": "^1.6.13"
+    }
+}
