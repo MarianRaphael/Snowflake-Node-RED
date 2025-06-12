@@ -59,46 +59,34 @@ with col2:
     st.write("") # Spacer
 
 # --- Documentation Section ---
-st.header("Getting Started with Custom Snowflake Nodes")
-st.write(
-    "Your Node-RED instance comes pre-installed with custom nodes to interact "
-    "seamlessly with your Snowflake data."
-)
-
-st.subheader("❄️ snowflake-in")
+st.header("Getting Started")
 st.write(
     """
-    An **input node** that executes a SQL query against your Snowflake database.
-    - **Usage:** Drag this node onto your canvas to start a flow.
-    - **Configuration:**
-        - `Name`: A display name for the node.
-        - `Query`: The SQL query to execute. You can use Mustache-style `{{{payload}}}` templating.
-    - **Output:** The result set of the query is passed as an array of objects in `msg.payload`.
+    Your Node-RED instance is a standard build. You can interact with Snowflake by:
+
+    1.  **Using the `Function` Node:** Write Node.js code inside a `function` node. You can `require('snowflake-sdk')` to connect to and query your database. You will need to manage connection details securely using environment variables.
+
+    2.  **Installing Nodes:** Use the "Manage Palette" feature in the Node-RED editor to install community-developed nodes for various services.
     """
 )
 
-st.subheader("❄️ snowflake-out")
-st.write(
-    """
-    An **output node** that writes data into a Snowflake table.
-    - **Usage:** Place this node at the end of a flow.
-    - **Configuration:**
-        - `Name`: A display name for the node.
-        - `Table`: The name of the target table (e.g., `MY_DATABASE.MY_SCHEMA.MY_TABLE`).
-        - `Columns`: A comma-separated list of column names to insert into.
-    - **Input:** The node expects `msg.payload` to be an object or an array of objects matching the column structure.
-    """
-)
+st.subheader("Connecting to Snowflake from a `Function` Node")
+st.code("""
+// Inside a Function Node:
 
-st.subheader("❄️ snowflake-exec")
-st.write(
-    """
-    A **function node** that executes any arbitrary SQL statement.
-    - **Usage:** Use this node to perform DDL, DML, or call stored procedures.
-    - **Configuration:**
-        - `Name`: A display name for the node.
-        - `Statement`: The SQL statement to execute. Can use `{{{payload}}}` templating.
-    - **Input:** The `msg.payload` can be used for templating in the SQL statement.
-    - **Output:** Outputs the result from the Snowflake connector on success.
-    """
-)
+// IMPORTANT: Store credentials securely as environment variables in your service definition,
+// do not hardcode them here.
+const snowflake = require('snowflake-sdk');
+
+const connection = snowflake.createConnection({
+    account: process.env.SNOWFLAKE_ACCOUNT,
+    username: process.env.SNOWFLAKE_USERNAME,
+    password: process.env.SNOWFLAKE_PASSWORD,
+    //... other parameters
+});
+
+// Your logic here...
+
+// Return msg to pass it to the next node in the flow
+return msg;
+""", language="javascript")
