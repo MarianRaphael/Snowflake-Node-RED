@@ -1,10 +1,5 @@
-# launcher-app/manifest.yml
-
 # The version of the manifest schema
 manifest_version: 1
-
-# The name of the application
-application_name: Node-RED for Snowflake
 
 # Privileges required by the application
 privileges:
@@ -24,4 +19,3 @@ default_streamlit: streamlit.app
 artifacts:
   - setup.sql
   - streamlit/
-
