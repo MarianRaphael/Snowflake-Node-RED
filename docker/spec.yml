@@ -1,0 +1,11 @@
+# docker/spec.yml
+spec:
+  containers:
+  - name: nodered
+    image: <your_org>-<your_acct>.snowflakecomputing.com/<db>/<schema>/nodered_repo:latest
+  endpoints:
+  - name: ui
+    port: 1880
+    public: true
+  networkPolicy:
+    allowInternetEgress: true
