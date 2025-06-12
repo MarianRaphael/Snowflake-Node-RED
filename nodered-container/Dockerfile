@@ -1,24 +1,16 @@
-# nodered-container/Dockerfile
+# Dockerfile
+# This is an example of a custom Dockerfile if you need to extend the base Node-RED image.
 
-# Use the official Node-RED image as the base
+# Use the official Node-RED image as a base
 FROM nodered/node-red:latest
 
-# Switch to the root user to install system dependencies
-USER root
+# Set the working directory
+WORKDIR /usr/src/node-red
 
-# Install Python and other build tools required for node-gyp and snowflake-sdk
-RUN apk add --no-cache python3 make g++
+# You can pre-install nodes here. For example, to install the Snowflake node:
+# RUN npm install node-red-contrib-snowflake
 
-# Switch back to the node-red user
-USER node-red
+# You can also copy a custom settings file.
+# COPY settings.js .
 
-# Copy the package.json for the main Node-RED environment
-COPY package.json .
-
-# Install the Snowflake SDK for Node.js
-# This allows users to write custom functions that interact with Snowflake
-RUN npm install
-
-# Copy the custom settings file
-COPY settings.js /data/settings.js
-
+# The base image already exposes port 1880 and sets the correct CMD.

@@ -1,6 +1,12 @@
+# manifest.yml
 manifest_version: 1
-setup_script: setup.sql
+
 artifacts:
-  - setup.sql
-  - streamlit/
-default_streamlit: streamlit.app
+  setup_script: setup.sql
+  default_release_directive:
+    version: V1
+    patch: 0
+
+configuration:
+  log_level: info
+  trace_level: off
