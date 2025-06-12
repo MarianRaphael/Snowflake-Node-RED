@@ -6,34 +6,44 @@ CREATE APPLICATION ROLE IF NOT EXISTS app_role;
 
 -- Create a schema to hold our application's objects.
 CREATE OR ALTER VERSIONED SCHEMA app_schema;
+GRANT USAGE ON SCHEMA app_schema TO APPLICATION ROLE app_role;
+
+-- Step 1: Create the individual network rules first.
+CREATE OR REPLACE NETWORK RULE app_schema.allow_https_rule
+  TYPE = 'HOST_PORT'
+  MODE = 'EGRESS'
+  VALUE_LIST = ('0.0.0.0:443');
+
+CREATE OR REPLACE NETWORK RULE app_schema.allow_http_rule
+  TYPE = 'HOST_PORT'
+  MODE = 'EGRESS'
+  VALUE_LIST = ('0.0.0.0:80');
+
+-- Step 2: Create the security integration and reference the network rules created above.
+CREATE OR REPLACE SECURITY INTEGRATION allow_all_integration
+  TYPE = EXTERNAL_ACCESS
+  ENABLED = true
+  ALLOWED_NETWORK_RULES = (app_schema.allow_https_rule, app_schema.allow_http_rule);
 
 -- Create a compute pool to run our container.
--- You might need to adjust the instance_family based on your needs.
--- For a simple Node-RED instance, the smallest size is usually sufficient.
+-- Note: 'STANDARD_1' is a common instance family. You may need to adjust this
+-- based on what's available in your Snowflake region.
 CREATE COMPUTE POOL IF NOT EXISTS nodered_compute_pool
   MIN_NODES = 1
   MAX_NODES = 1
-  INSTANCE_FAMILY = CPU_X64_XS;
-
--- Create a security integration to allow outbound network access from Node-RED.
--- This is crucial for Node-RED to be able to connect to external APIs and services.
-CREATE SECURITY INTEGRATION IF NOT EXISTS allow_all_integration
-  TYPE = EXTERNAL_ACCESS
-  ENABLED = true
-  ALLOWED_NETWORK_RULES = (
-    (HOST = '0.0.0.0', PORT = 443),
-    (HOST = '0.0.0.0', PORT = 80)
-  );
+  INSTANCE_FAMILY = 'STANDARD_1';
 
 -- Create the service that runs the Node-RED container.
--- We use the official Node-RED Docker image from Docker Hub.
+-- IMPORTANT: The 'image:' path below is a placeholder. You MUST replace
+-- '<database>/<schema>/<repo>' with the path to your Snowflake image repository
+-- where you have pushed the Node-RED image.
 CREATE SERVICE IF NOT EXISTS nodered_service
   IN COMPUTE POOL nodered_compute_pool
   FROM SPECIFICATION $$
 spec:
   containers:
   - name: nodered
-    image: /reponame/nodered/node-red:latest  # Note: You need to pull this image into a Snowflake image repository
+    image: /<database>/<schema>/<repo>/node-red:latest
     ports:
     - name: http
       port: 1880
@@ -44,10 +54,10 @@ spec:
   $$
   EXTERNAL_ACCESS_INTEGRATIONS = (allow_all_integration);
 
--- Grant permissions to the application role.
-GRANT USAGE ON SCHEMA app_schema TO APPLICATION ROLE app_role;
+-- Grant necessary privileges to the application role.
 GRANT USAGE ON SERVICE nodered_service TO APPLICATION ROLE app_role;
 GRANT USAGE ON COMPUTE POOL nodered_compute_pool TO APPLICATION ROLE app_role;
+GRANT USAGE ON INTEGRATION allow_all_integration TO APPLICATION ROLE app_role;
+GRANT USAGE ON NETWORK RULE app_schema.allow_https_rule TO APPLICATION ROLE app_role;
+GRANT USAGE ON NETWORK RULE app_schema.allow_http_rule TO APPLICATION ROLE app_role;
 
--- This is a placeholder for where you would grant more specific permissions.
--- For example, if you create tables or functions, you would grant usage on them here.
