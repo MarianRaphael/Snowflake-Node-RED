@@ -1,21 +1,12 @@
-# The version of the manifest schema
 manifest_version: 1
-
-# Privileges required by the application
 privileges:
   - USAGE on WAREHOUSE COMPUTE_WH
   - CREATE COMPUTE POOL
   - CREATE SERVICE
   - USAGE on DATABASE
   - USAGE on SCHEMA
-
-# The setup script to be run upon installation
 setup_script: setup.sql
-
-# The Streamlit entrypoint
 default_streamlit: streamlit.app
-
-# Configuration for the application package
 artifacts:
   - setup.sql
   - streamlit/
