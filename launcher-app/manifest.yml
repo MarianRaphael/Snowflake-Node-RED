@@ -1,11 +1,10 @@
 # manifest.yml
+# Defines the contents of the application version.
+
 manifest_version: 1
 
 artifacts:
   setup_script: setup.sql
-  default_release_directive:
-    version: V1
-    patch: 0
 
 configuration:
   log_level: info
