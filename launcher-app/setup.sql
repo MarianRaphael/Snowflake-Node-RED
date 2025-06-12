@@ -19,11 +19,11 @@ CREATE OR REPLACE NETWORK RULE app_schema.allow_http_rule
   MODE = 'EGRESS'
   VALUE_LIST = ('0.0.0.0:80');
 
--- Step 2: Create the security integration and reference the network rules created above.
-CREATE OR REPLACE SECURITY INTEGRATION allow_all_integration
-  TYPE = EXTERNAL_ACCESS
-  ENABLED = true
-  ALLOWED_NETWORK_RULES = (app_schema.allow_https_rule, app_schema.allow_http_rule);
+-- Step 2: Create the external access integration and reference the network rules.
+-- This command is corrected from 'CREATE SECURITY INTEGRATION' to the proper 'CREATE EXTERNAL ACCESS INTEGRATION'.
+CREATE OR REPLACE EXTERNAL ACCESS INTEGRATION allow_all_integration
+  ALLOWED_NETWORK_RULES = (app_schema.allow_https_rule, app_schema.allow_http_rule)
+  ENABLED = true;
 
 -- Create a compute pool to run our container.
 -- Note: 'STANDARD_1' is a common instance family. You may need to adjust this
